@@ -134,7 +134,7 @@ class Configurator:
     def __init__(self, title):
         dialog = QDialog()
         dialog.setWindowTitle(title)
-        dialog.setWindowIcon(QIcon.fromTheme("settings"))
+        dialog.setWindowIcon(QIcon.fromTheme("settings", QIcon.fromTheme("configure")))
         # File selection handler
         def select(factory):
             selection, _ = factory(
@@ -300,7 +300,10 @@ async def display(application, close, state, setup):
     # Initialize the context menu
     menu = QMenu()
     trigger = menu.addAction(QIcon.fromTheme("media-pause"), "&Pause")
-    settings = menu.addAction(QIcon.fromTheme("settings"), "&Settings")
+    settings = menu.addAction(
+        QIcon.fromTheme("settings", QIcon.fromTheme("configure")),
+        "&Settings"
+    )
     menu.addSeparator()
     menu.addAction(QIcon.fromTheme("exit"), "&Exit").triggered.connect(close.set)
 
@@ -427,7 +430,7 @@ async def terminate(awaitable, *callables):
 async def initialize(state):
     # Perform any initialization tasks that depend on
     # Qt or other externals
-    state.icon = state.base = QIcon.fromTheme("display")
+    state.icon = state.base = QIcon.fromTheme("display", QIcon.fromTheme("monitor"))
     # Kickstart the timer by notifying observers
     # about the initial mode
     notify(state, "rest", "notify")
