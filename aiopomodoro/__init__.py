@@ -291,6 +291,19 @@ class Configurator:
             if self.audio != state.audio: state.audio = self.audio
             if self.jingle != state.jingle: state.jingle = self.jingle
 
+def blend(pixmap, color, mode=QPainter.CompositionMode_SourceAtop):
+    painter = QPainter(pixmap)
+    try:
+        painter.setCompositionMode(mode)
+        painter.fillRect(
+            0, 0,
+            pixmap.width(), pixmap.height(),
+            color
+        )
+    finally:
+        painter.end()
+    return pixmap
+
 async def display(application, close, state, setup):
     # Initialize the context menu
     menu = QMenu()
@@ -332,24 +345,24 @@ async def display(application, close, state, setup):
     # Propagate the icon state to the tray icon
     @observe.seq(state, "icon")
     def icon(value):
+        if state.suspend:
+            pixmap = blend(
+                value.pixmap(value.actualSize(QSize(22, 22))),
+                QColor(128, 128, 128, 128)
+            )
+            value = QIcon(pixmap)
         tray.setIcon(value)
 
     # Colorize the icon based on elapsed time and current
     # mode
     @observe.seq(state, "elapsed")
     def colorize(value):
+        if state.rest:
+            color = QColor(0, 0, 255, 128 * (1 - (value / (state.delay * 60))))
+        else:
+            color = QColor(255, 0, 0, 128 * value / (state.delay * 60))
         pixmap = state.base.pixmap(state.base.actualSize(QSize(22, 22)))
-        painter = QPainter(pixmap)
-        try:
-            painter.setCompositionMode(QPainter.CompositionMode_SourceAtop)
-            painter.fillRect(
-                0, 0,
-                pixmap.width(), pixmap.height(),
-                QColor(0, 0, 255, 128 * (1 - (value / (state.delay * 60)))) if state.rest else (
-                    QColor(255, 0, 0, 128 * value / (state.delay * 60)))
-            )
-        finally:
-            painter.end()
+        pixmap = blend(pixmap, color)
         state.icon = QIcon(pixmap)
 
     # Update tray icon tooltip with the remaining time
@@ -395,6 +408,7 @@ async def display(application, close, state, setup):
     def suspended(value):
         trigger.setIcon(QIcon.fromTheme("media-play" if value else "media-pause"))
         trigger.setText("&Resume" if value else "&Pause")
+        notify(state, "icon")
 
     # Disable context menu interactions (except exit) as long
     # as the configuration dialog is visible
