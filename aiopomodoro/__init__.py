@@ -281,7 +281,7 @@ class Configurator:
         # Show the dialog
         if self.run():
             # If accepted, update model state ignoring
-            # unchanged propertiess
+            # unchanged properties
             if self.interval != state.interval: state.interval = self.interval
             if self.duration != state.duration: state.duration = self.duration
             if self.skip != state.skip: state.skip = self.skip
