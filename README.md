@@ -2,6 +2,8 @@
 
 A simple asyncio (qasync) / pyside-based pomodoro timer for Linux desktops
 
+![Screenshot](github-assets/screenshot.png)
+
 ## Description
 
 This is a basic pomodoro timer for KDE or GNOME. It displays an tray icon on your X11 desktop and assists in timing and scheduling your breaks using the pomodoro technique.
