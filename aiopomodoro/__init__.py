@@ -56,15 +56,15 @@ class State(ObservableMixIn):
     @property
     def interval(self):
         return int(os.getenv("AIOPOMODORO_INTERVAL", 30))
-    
+
     @interval.setter
     def interval(self, value):
         os.environ["AIOPOMODORO_INTERVAL"] = str(value)
-    
+
     @property
     def duration(self):
         return int(os.getenv("AIOPOMODORO_BREAK", 15))
-    
+
     @duration.setter
     def duration(self, value):
         os.environ["AIOPOMODORO_BREAK"] = str(value)
@@ -72,7 +72,7 @@ class State(ObservableMixIn):
     @property
     def notify(self):
         return int(os.getenv("AIOPOMODORO_NOTIFY", 30))
-    
+
     @notify.setter
     def notify(self, value):
         os.environ["AIOPOMODORO_NOTIFY"] = str(value)
@@ -219,11 +219,11 @@ class Configurator:
     @property
     def interval(self):
         return self.controls["interval"].value()
-    
+
     @interval.setter
     def interval(self, value):
         self.controls["interval"].setValue(value)
-    
+
     @property
     def duration(self):
         return self.controls["duration"].value()
@@ -266,7 +266,7 @@ class Configurator:
 
     def run(self):
         return self.dialog.exec_() == QDialog.Accepted
-    
+
     @contextmanager
     def use(self, state):
         # Load settings into dialog controls
@@ -343,7 +343,7 @@ async def display(application, close, state, setup):
             painter.fillRect(
                 0, 0,
                 pixmap.width(), pixmap.height(),
-                QColor(0, 0, 255, 128 * 1 - (value / (state.delay * 60))) if state.rest else (
+                QColor(0, 0, 255, 128 * (1 - (value / (state.delay * 60)))) if state.rest else (
                     QColor(255, 0, 0, 128 * value / (state.delay * 60)))
             )
         finally:
@@ -376,7 +376,7 @@ async def display(application, close, state, setup):
                 @notification.action("skip", "Skip")
                 def _(*args, **kwargs):
                     notify(state, "delay")
-            
+
             if (audiofile := state.audiofile):
                 player = QMediaPlayer()
                 player.setMedia(QUrl.fromLocalFile(audiofile))
@@ -496,13 +496,25 @@ async def control(state):
             active.clear()
         else:
             active.set()
-    
+
     @observe.seq(state, "configuring")
     def configured(value):
         if not value:
             state.save()
 
-    await asyncio.gather(delay, suspended, notifier, modeswitch, configured)
+    # Make sure Changes in break/activity window durations reset
+    # the timer
+    @observe.seq(state, "interval")
+    def interval(value):
+        if not state.rest:
+            notify(state, "delay")
+    
+    @observe.seq(state, "duration")
+    def duration(value):
+        if state.rest:
+            notify(state, "delay")
+
+    await asyncio.gather(delay, suspended, notifier, modeswitch, configured, interval, duration)
 
 async def amain(appname):
     loop = asyncio.get_event_loop()
