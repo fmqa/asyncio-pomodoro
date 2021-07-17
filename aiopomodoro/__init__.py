@@ -270,26 +270,18 @@ class Configurator:
         return self.dialog.exec_() == QDialog.Accepted
 
     @contextmanager
-    def use(self, state):
+    def use(self, state, attrs=("interval", "duration", "skip", "lock", "audio", "jingle")):
         # Load settings into dialog controls
-        self.interval = state.interval
-        self.duration = state.duration
-        self.skip = state.skip
-        self.lock = state.lock
-        self.audio = state.audio
-        self.jingle = state.jingle
+        for name in attrs:
+            setattr(self, name, getattr(state, name))
         # Yield to caller
         yield state
         # Show the dialog
         if self.run():
-            # If accepted, update model state ignoring
-            # unchanged properties
-            if self.interval != state.interval: state.interval = self.interval
-            if self.duration != state.duration: state.duration = self.duration
-            if self.skip != state.skip: state.skip = self.skip
-            if self.lock != state.lock: state.lock = self.lock
-            if self.audio != state.audio: state.audio = self.audio
-            if self.jingle != state.jingle: state.jingle = self.jingle
+            # If accepted, update model state ignoring # unchanged properties
+            for name in attrs:
+                if getattr(self, name) != getattr(state, name):
+                    setattr(state, name, getattr(self, name))
 
 def blend(pixmap, color, mode=QPainter.CompositionMode_SourceAtop):
     painter = QPainter(pixmap)
