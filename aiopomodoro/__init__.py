@@ -376,7 +376,7 @@ async def display(application, close, state, setup):
             notification = Notification(
                 "Break time",
                 f"Break ends in {state.notify} seconds" if state.rest else f"Next break in {state.notify} seconds",
-                QIcon.fromTheme("hourglass", QIcon.fromTheme("chronometer")).pixmap(24, 24),
+                QIcon.fromTheme("hourglass", QIcon.fromTheme("chronometer")).pixmap(32, 32),
                 state.notify * 1000
             )
 
@@ -558,7 +558,7 @@ async def amain(appname):
     except asyncio.CancelledError:
         pass
 
-def main(appname="Pomodoro timer", run=qasync.run):
+def main(appname="Pomodoro Timer", run=qasync.run):
     Notification.initialize(appname)
     run(amain(appname))
 
