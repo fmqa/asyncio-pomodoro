@@ -6,7 +6,7 @@ A simple asyncio ([qasync](https://github.com/CabbageDevelopment/qasync)) / pysi
 
 ## Description
 
-This is a basic pomodoro timer for KDE or GNOME. It displays an tray icon on your X11 desktop and assists in timing and scheduling your breaks using the pomodoro technique.
+This is a basic pomodoro timer for KDE or GNOME. It displays a tray icon on your X11 desktop and assists in timing and scheduling your breaks using the pomodoro technique.
 
 It includes the following functionalities:
 
@@ -24,7 +24,7 @@ Can optionally trigger the desktop's lock screen on break begin.
 
 ### Feedback
 
-Custom audio feedback is possible in addition to the visual notification. Allows selection of a custom audio file to play. The tray icon changes color based on the elapsed time.
+Custom audio feedback is possible - allows selection of a custom audio file to play. The tray icon changes color based on the elapsed time.
 
 ### Other
 
