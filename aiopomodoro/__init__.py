@@ -137,12 +137,14 @@ class Configurator:
         dialog.setWindowIcon(QIcon.fromTheme("settings"))
         # File selection handler
         def select(factory):
-            self.jingle, _ = factory(
+            selection, _ = factory(
                 dialog,
                 "Open File",
                 dir=os.getenv("HOME", None),
                 filter="Audio Files (*.wav *.mp3 *.flac *.ogg *.aac)"
             )
+            if selection:
+                self.jingle = selection
         ico = QSize(16, 16)
         # Build dialog content
         with immediate.on(dialog) as imm:
