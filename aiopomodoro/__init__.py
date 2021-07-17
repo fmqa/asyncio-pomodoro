@@ -155,7 +155,9 @@ class Configurator:
                             with gimm.add(QVBoxLayout()):
                                 with gimm.add(QHBoxLayout()):
                                     w = gimm.add(QLabel())
-                                    w.setPixmap(QIcon.fromTheme("hourglass").pixmap(ico))
+                                    w.setPixmap(
+                                        QIcon.fromTheme("hourglass",
+                                            QIcon.fromTheme("chronometer")).pixmap(ico))
                                     w.setMaximumSize(ico)
                                     w = gimm.add(QLabel("Interval"))
                                     interval = gimm.add(QSpinBox())
@@ -374,7 +376,7 @@ async def display(application, close, state, setup):
             notification = Notification(
                 "Break time",
                 f"Break ends in {state.notify} seconds" if state.rest else f"Next break in {state.notify} seconds",
-                QIcon.fromTheme("hourglass").pixmap(16, 16),
+                QIcon.fromTheme("hourglass", QIcon.fromTheme("chronometer")).pixmap(24, 24),
                 state.notify * 1000
             )
 
