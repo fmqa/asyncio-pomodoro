@@ -1,6 +1,6 @@
 # asyncio-pomodoro
 
-A simple asyncio (qasync) / pyside-based pomodoro timer for Linux desktops
+A simple asyncio ([qasync](https://github.com/CabbageDevelopment/qasync)) / pyside-based pomodoro timer for Linux desktops
 
 ![Screenshot](github-assets/screenshot.png)
 
